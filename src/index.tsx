@@ -53,8 +53,14 @@ const NODE_GRID: { [key: string]: NodeId | undefined } = {}
 const NODES: { [key: NodeId]: Node } = {}
 const GRID_SIZE = 50
 
-addNode(0, 0, 'TEST')
-addNode(200, 0, 'TEST2')
+
+for (let x = 0; x < 20; x++) {
+  for (let y = 0; y < 10; y++) {
+    addNode(x * GRID_SIZE * 5, y * GRID_SIZE, `${x}:${y}`)
+    console.log(x * GRID_SIZE * 5, y * GRID_SIZE, toCssTranslate(x * GRID_SIZE * 5, y * GRID_SIZE,))
+  }
+}
+
 
 updateViewport()
 const LockCanvas = <canvas className='hidden-canvas'></canvas>
@@ -182,7 +188,12 @@ function addNode(x: number, y: number, name: string, shape: NodeShape = '1') {
     {getNodeSvg(shape)}
 
     {nameEL}
-
+    <span>AWD</span>
+    <span>AWD</span>
+    <span>AWD</span>
+    <span>AWD</span>
+    <span>AWD</span>
+    <span>AWD</span>
   </div>
 
   nodeEl.style.transform = toCssTranslate(x, y)
@@ -219,7 +230,7 @@ function toPx(val: string | number) {
 function toCssTranslate(x: number, y: number) {
   return `translate(${x}px, ${y}px)`
 }
-
+console.log(toCssTranslate(0, 0))
 type NodeShape = '1' | '2' | '3'
 
 function getNodeSvg(shape: NodeShape): Element {
@@ -239,3 +250,34 @@ function getNodeSvg(shape: NodeShape): Element {
 
   }
 }
+
+const kFps = <span id="kFps"></span>
+const kpFps = <progress id="kpFps" max={60}></progress>
+//@ts-ignore
+kpFps.min = 0
+document.body.appendChild(<div style={{ top: '200px', position: 'absolute', background: 'black' }}>
+  {kFps}
+  {kpFps}
+
+</div>)
+let be = Date.now(), fps = 0;
+requestAnimationFrame(
+  function loop() {
+    let now = Date.now()
+    fps = Math.round(1000 / (now - be))
+    be = now
+    requestAnimationFrame(loop)
+    if (fps < 35) {
+      kFps.style.color = "red"
+      kFps.textContent = fps + "FPS"
+    } else if (fps >= 35 && fps <= 41) {
+      kFps.style.color = "deepskyblue"
+      kFps.textContent = fps + " FPS"
+    } else {
+      kFps.style.color = "white"
+      kFps.textContent = fps + " FPS"
+    }
+    //@ts-ignore
+    kpFps.value = fps
+  }
+)
